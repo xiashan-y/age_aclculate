@@ -89,12 +89,19 @@
       
       var warningElement = document.getElementById("warning");
       if (years < 7) {
-        warningElement.innerHTML = "当前孩子年龄太小";
-      } else if (years > 11) {
-        warningElement.innerHTML = "孩子可能需要机票补差";
+        warningElement.innerHTML = "<span style='color: red;'>当前孩子年龄太小</span>";
+      } else if (years >= 12) {
+        warningElement.innerHTML = "<span style='color: red;'>孩子可能需要机票补差</span>";
       } else {
         warningElement.innerHTML = "";
       }
+      
+      // 计算达到12岁的日期
+      var twelveYearsDate = new Date(birthday);
+      twelveYearsDate.setFullYear(twelveYearsDate.getFullYear() + 12);
+      var twelveYearsDateString = twelveYearsDate.getFullYear() + "-" + (twelveYearsDate.getMonth() + 1).toString().padStart(2, '0');
+      
+      resultElement.innerHTML += "<br>达到12岁的日期为：" + twelveYearsDateString;
     }
     
     function resetFields() {
