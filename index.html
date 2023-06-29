@@ -34,12 +34,14 @@
     
     p.result {
       font-weight: bold;
-      margin-top: 20px;
+      margin-top: 40px;
+      line-height: 1.5;
     }
     
     p.warning {
       color: red;
-      margin-top: 10px;
+      margin-top: 20px;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -47,10 +49,10 @@
   <h1>夏山年龄计算器</h1>
   
   <label for="birthday">出生日期（YYYY-MM）:</label>
-  <input type="text" id="birthday" placeholder="例如：2012-04">
+  <input type="text" id="birthday" placeholder="例如：2012-04" onkeydown="if(event.keyCode===13) calculateAge()">
   
   <label for="target-date">特定目标日期（YYYY-MM）:</label>
-  <input type="text" id="target-date" placeholder="留空默认为当前日期">
+  <input type="text" id="target-date" placeholder="留空默认为当前日期" onkeydown="if(event.keyCode===13) calculateAge()">
   
   <br>
   
@@ -58,7 +60,7 @@
   <button class="reset" onclick="resetFields()">复位</button>
   
   <p id="result"></p>
-  <p id="warning"></p>
+  <p id="warning" class="warning"></p>
   
   <script>
     function calculateAge() {
@@ -83,25 +85,34 @@
         months += 12;
       }
       
-      var resultText = "在" + birthday + "出生的人，到" + (targetDate || "现在") + "，年龄为" + years + "岁" + months + "个月";
+      var zodiacSigns = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"];
+      var zodiacIndex = (birthYear - 1900) % 12;
+      var zodiacText = "<span style='color: red;'>" + zodiacSigns[zodiacIndex] + "</span>";
+      
+      var resultText = "在<strong>" + birthday + "</strong>出生的人，生肖是：<strong>" + zodiacText + "</strong>，到<strong>" + (targetDate || "现在") + "</strong>，年龄为<strong>" + years + "岁" + months + "个月</strong>。";
+      
+      var twelveYearsText = "";
+      var twelveYearsMonth = birthMonth;
+      var twelveYearsYear = birthYear + 12;
+      
+      if (twelveYearsMonth > 12) {
+        twelveYearsMonth -= 12;
+        twelveYearsYear++;
+      }
+      
+      twelveYearsText = "到<strong>" + twelveYearsYear + "年" + twelveYearsMonth + "月份</strong>达到12岁。";
+      
       var resultElement = document.getElementById("result");
-      resultElement.innerHTML = resultText;
+      resultElement.innerHTML = resultText + "<br>" + twelveYearsText;
       
       var warningElement = document.getElementById("warning");
       if (years < 7) {
-        warningElement.innerHTML = "<span style='color: red;'>当前孩子年龄太小</span>";
-      } else if (years >= 12) {
-        warningElement.innerHTML = "<span style='color: red;'>孩子可能需要机票补差</span>";
+        warningElement.innerHTML = "<span style='color: red;'>当前孩子年龄太小。</span>";
+      } else if (years > 11) {
+        warningElement.innerHTML = "<span style='color: red;'>孩子可能需要机票补差。</span>";
       } else {
         warningElement.innerHTML = "";
       }
-      
-      // 计算达到12岁的日期
-      var twelveYearsDate = new Date(birthday);
-      twelveYearsDate.setFullYear(twelveYearsDate.getFullYear() + 12);
-      var twelveYearsDateString = twelveYearsDate.getFullYear() + "-" + (twelveYearsDate.getMonth() + 1).toString().padStart(2, '0');
-      
-      resultElement.innerHTML += "<br>达到12岁的日期为：" + twelveYearsDateString;
     }
     
     function resetFields() {
